@@ -1,5 +1,23 @@
 {% extends 'layout.html' %}
 
 {% block body %}
-<h3>Ana Sayfa</h3>
+<div class="jumbotron text-center">
+    <h3>Yazılım Bilimi Bloğuna Hoşgeldiniz..</h3>
+    <p>Bu blogta gelişitiriciler olarak blog yazılarınızı paylaşabilirsiniz ve insanlara yardımcı olabilirsiniz.</p>
+</div>
+
+{% if answer == "evet" %}
+<p>Cevabımız evetmiş...</p> 
+{% elif answer == "hayır" %}
+<p>Cevabımız hayırmış...</p>   
+{% else %}
+<p>Cevabımız evet ve hayır değilmiş...</p>
+{% endif %}
+
+<ul>
+    {% for article in articles %}
+        <li>Article Id : {{article.id}}  -  Title : {{article.title}}  -  Content : {{article.content}}</li>
+    {% endfor %}
+</ul>
+<!-- <h3>Ana Sayfa</h3> -->
 {% endblock %}
