@@ -2,6 +2,20 @@ from flask import Flask, render_template,flash,redirect,url_for,session,logging,
 from flask_mysqldb import MySQL
 from wtforms import Form,StringField,TextAreaField,PasswordField,validators
 from passlib.hash import sha256_crypt
+from flask_wtf import FlaskForm
+from flask_wtf.file import FileField, FileAllowed
+
+
+# User Registration Form
+class RegisterForm(Form):
+    name = StringField("Name Surname", validators=[validators.Length(min = 4, max = 25)])
+    username = StringField("Username", validators=[validators.Length(min = 5, max = 35)])
+    email = StringField("Email Address", validators=[validators.Email(message="Please enter valid Email address! ")])
+    password = PasswordField("Password : ", validators=[
+        validators.DataRequired(message = "Please enter password"),
+        validators.EqualTo(fieldname = "confirm", message="Your password does not match")
+    ])
+    confirm = PasswordField("Confirm your password")
 
 app = Flask(__name__)
 
