@@ -1,3 +1,4 @@
+from crypt import methods
 from flask import Flask, render_template,flash,redirect,url_for,session,logging,request
 from flask_mysqldb import MySQL
 from wtforms import Form,StringField,TextAreaField,PasswordField,validators
@@ -41,6 +42,16 @@ def index() :
 @app.route("/about")
 def about():
     return render_template("about.html")
+
+# Register
+@app.route("/register", methods = ["GET", "POST"])
+def register() :
+    form = RegisterForm(request.form)
+    
+    if request.method == "POST" :
+        
+
+    return render_template("register.html")
 
 @app.route("/article/<string:id>")
 def detail(id) :
