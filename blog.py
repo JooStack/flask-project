@@ -15,7 +15,13 @@ class RegisterForm(Form):
     ])
     confirm = PasswordField("Confirm your password")
 
+class LoginForm(Form) :
+    username = StringField("Username")
+    password = StringField("Parola")
+
+
 app = Flask(__name__)
+app.secret_key = "myblog"
 
 app.config["MYSQL_HOST"] = "localhost"
 app.config["MYSQL_USER"] = "root"
@@ -55,13 +61,46 @@ def register() :
 
         mysql.connection.commit()
         cursor.close()
-        return redirect(url_for("index"))
+
+        flash("Successful Registration...","success")
+        return redirect(url_for("login"))
     else :
         return render_template("register.html", form = form)
 
 @app.route("/article/<string:id>")
 def detail(id) :
     return "Article Id : " + id
+
+# Login
+@app.route("/login", methods = ["GET","POST"])
+def login() :
+    form = LoginForm(request.form)
+    if request.method == "POST" :
+        username = form.username.data 
+        password_entered = form.password.data 
+
+        cursor = mysql.connection.cursor() 
+
+        sorgu = "Select * From users where username = %s "
+
+        result = cursor.execute(sorgu, (username,))
+
+        if result > 0 :
+            data = cursor.fetchone()
+            real_password = data["password"]
+            if sha256_crypt.verify(password_entered,real_password) :
+                flash("Successfully logged in...","success")
+                return redirect(url_for("index"))
+            else :
+                flash("Invalid password..","danger")
+                return redirect(url_for("login"))
+                
+        else :
+            flash("Such a user is not registered..","danger")
+            return redirect(url_for("login"))
+
+
+    return render_template("login.html", form = form)
 
 
 if __name__ == "__main__" :
