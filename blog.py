@@ -93,7 +93,7 @@ def login() :
                 
                 session["login_in"] = True
                 session["username"] = username
-                
+
                 return redirect(url_for("index"))
             else :
                 flash("Invalid password..","danger")
@@ -106,6 +106,11 @@ def login() :
 
     return render_template("login.html", form = form)
 
+# Logout 
+@app.route("/logout")
+def logout() :
+    session.clear()
+    return redirect(url_for("index"))
 
 if __name__ == "__main__" :
     app.run(debug=True)
