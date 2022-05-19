@@ -1,4 +1,4 @@
-from flask import Flask, render_template,flash,redirect,url_for,session,logging,request
+from flask import Flask, render_template,flash,redirect,url_for,session ,logging,request
 from flask_mysqldb import MySQL
 from wtforms import Form,StringField,TextAreaField,PasswordField,validators
 from passlib.hash import sha256_crypt
@@ -44,6 +44,10 @@ def index() :
 def about():
     return render_template("about.html")
 
+@app.route("/dashboard")
+def dashboard() :
+    return render_template("dashboard.html")
+    
 # Register
 @app.route("/register", methods = ["GET", "POST"])
 def register() :
@@ -91,9 +95,8 @@ def login() :
             if sha256_crypt.verify(password_entered,real_password) :
                 flash("Successfully logged in...","success")
                 
-                session["login_in"] = True
+                session["logged_in"] = True
                 session["username"] = username
-
                 return redirect(url_for("index"))
             else :
                 flash("Invalid password..","danger")
