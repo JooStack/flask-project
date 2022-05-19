@@ -193,6 +193,34 @@ def addarticle() :
 
     return render_template("addarticle.html", form = form)
 
+# Delete Article
+@app.route("/delete/<string:id>")
+@login_required
+def delete(id) :
+    cursor = mysql.connection.cursor()
+    sorgu = "Select * from articles where author = %s and id = %s"
+    result = cursor.execute(sorgu, (session["username"],id))
+
+    if result > 0 :
+        sorgu2 = "Delete from articles where id = %s"
+        cursor.execute(sorgu2,(id,))
+        mysql.connection.commit()
+        return redirect(url_for("dashboard"))
+
+    else :
+        
+        flash("There is no such article or you are not authorized to do this..","danger")
+        return redirect(url_for("index"))
+
+# Article Update
+@app.route("/edit/<string:id>",methods = ["GET","POST"])
+@login_required
+def update(id) :
+    if request.method == "GET" :
+        pass
+    else :
+        pass
+
 
 # Article Form
 class ArticleForm(Form) :
