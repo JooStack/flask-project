@@ -1,3 +1,4 @@
+import re
 from flask import Flask, render_template,flash,redirect,url_for,session ,logging,request
 from flask_mysqldb import MySQL
 from wtforms import Form,StringField,TextAreaField,PasswordField,validators
@@ -76,7 +77,18 @@ def articles() :
 @app.route("/dashboard")
 @login_required
 def dashboard() :
-    return render_template("dashboard.html")
+    cursor = mysql.connection.cursor()
+
+    sorgu = "Select * From articles where author = %s"
+    
+    result = cursor.execute(sorgu,(session["username"],))
+
+    if result > 0 :
+        articles = cursor.fetchall()
+        return render_template("dashboard.html", articles = articles) 
+    else :
+        return render_template("dashboard.html")
+
 
 # Register
 @app.route("/register", methods = ["GET", "POST"])
@@ -101,9 +113,9 @@ def register() :
     else :
         return render_template("register.html", form = form)
 
-@app.route("/article/<string:id>")
-def detail(id) :
-    return "Article Id : " + id
+# @app.route("/article/<string:id>")
+# def detail(id) :
+#     return "Article Id : " + id
 
 # Login
 @app.route("/login", methods = ["GET","POST"])
@@ -144,6 +156,19 @@ def login() :
 def logout() :
     session.clear()
     return redirect(url_for("index"))
+
+# Detail 
+
+@app.route("/article/<string:id>")
+def article(id) :
+    cursor = mysql.connection.cursor()
+    sorgu = "Select * From articles where id = %s"
+    result = cursor.execute(sorgu,(id,))
+    if result > 0 :
+        article = cursor.fetchone()
+        return render_template("article.html", article = article)
+    else :
+        return render_template("article.html")
 
 # Add Article
 @app.route("/addarticle",methods = ["GET", "POST"])
