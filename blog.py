@@ -127,6 +127,22 @@ def logout() :
     session.clear()
     return redirect(url_for("index"))
 
+# Add Article
+@app.route("/addarticle",methods = ["GET", "POST"])
+def addarticle() :
+    form = ArticleForm(request.form)
+    
+    return render_template("addarticle.html", form = form)
+
+
+# Article Form
+class ArticleForm(Form) :
+    title = StringField("Article Title",validators=[validators.Length(min=5,max=20)])
+    content = TextAreaField("Article Content",validators=[validators.Length(min = 10)])
+
+
+
+
 if __name__ == "__main__" :
     app.run(debug=True)
 
