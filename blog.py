@@ -255,6 +255,23 @@ class ArticleForm(Form) :
     content = TextAreaField("Article Content",validators=[validators.Length(min = 10)])
 
 
+# Search
+@app.route("/search",methods = ["GET","POST"])
+def search() :
+    if request.method == "GET" :
+        return redirect(url_for("index"))
+    else :
+        keyword = request.form.get("keyword")
+        cursor = mysql.connection.cursor()
+        sorgu = "Select * from articles where title like '%" + keyword + "%'"
+        result = cursor.execute(sorgu)
+
+        if result == 0 :
+            flash("No article found matching the search term..","warning")
+            return redirect(url_for("articles"))
+        else :
+            articles = cursor.fetchall()
+            return render_template("articles.html", articles = articles)        
 
 
 if __name__ == "__main__" :
