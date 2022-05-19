@@ -217,14 +217,41 @@ def delete(id) :
 @login_required
 def update(id) :
     if request.method == "GET" :
-        pass
-    else :
-        pass
+        cursor = mysql.connection.cursor()
+        sorgu = "Select * from articles where id = %s and author = %s"
+        result = cursor.execute(sorgu, (id,session["username"]))
 
+        if result == 0 :
+            flash("There is no such a article or you are not authorized to do this..")
+            return redirect(url_for("index"))
+        else :
+            article = cursor.fetchone() 
+            form = ArticleForm()
+
+            form.title.data = article["title"]
+            form.content.data = article["content"]
+            return render_template("update.html", form = form)
+    else :
+        # Post Request
+        form = ArticleForm(request.form)
+
+        newTitle = form.title.data
+        newContent = form.content.data
+
+        sorgu2 = "Update articles Set title = %s, content = %s where id = %s"
+
+        cursor = mysql.connection.cursor()
+
+        cursor.execute(sorgu2,(newTitle, newContent, id))
+        mysql.connection.commit()
+
+        flash("Updating successful","success")
+
+        return redirect(url_for("dashboard"))
 
 # Article Form
 class ArticleForm(Form) :
-    title = StringField("Article Title",validators=[validators.Length(min=5,max=20)])
+    title = StringField("Article Title",validators=[validators.Length(min=5,max=50)])
     content = TextAreaField("Article Content",validators=[validators.Length(min = 10)])
 
 
